@@ -35,11 +35,10 @@ ZEND_DECLARE_MODULE_GLOBALS(wxwork_finance_sdk)
 static int le_wxwork_finance_sdk;
 const static char *VERSION = "1.0";
 
-static WeWorkFinanceSdk_t *sdk;
-
 static zend_class_entry *wxwork_finance_sdk_ce;
 static zend_class_entry *wxwork_finance_sdk_exception_ce;
 
+static WeWorkFinanceSdk_t *sdk;
 
 /**
 * options = [
@@ -49,8 +48,8 @@ static zend_class_entry *wxwork_finance_sdk_exception_ce;
 */
 PHP_METHOD(WxworkFinanceSdk, __construct)
 {
-    zend_string *corp_id, *secret;
-    zval *option_zval;
+    zend_string *corp_id, *secret = NULL;
+    zval *option_zval = NULL;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "SS|a", &corp_id, &secret, &option_zval) == FAILURE) {
         return;
@@ -58,10 +57,18 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
 
     if (ZSTR_LEN(corp_id) == 0 || ZSTR_LEN(secret) == 0) {
         zend_throw_exception(spl_ce_InvalidArgumentException, "corpId and secret cannot be bull", 0);
+        return;
     }
 
-    TRACE("copr_id value=%s", ZSTR_VAL(corp_id));
-    
+    TRACE("corp_id value=%s secret = %s", ZSTR_VAL(corp_id), ZSTR_VAL(secret));
+
+    int ret = Init(sdk, ZSTR_VAL(corp_id), ZSTR_VAL(secret));
+
+    if (ret != 0) {
+        zend_throw_exception(wxwork_finance_sdk_exception_ce, "Call WeWorkFinanceSdk_t Init error", ret);
+        return;
+    }
+
 
     zval *this = getThis();
     zend_class_entry *ce = Z_OBJCE_P(this);
@@ -70,15 +77,63 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
     zend_declare_property_string(ce, "_secret", sizeof("_secret") - 1, ZSTR_VAL(secret), ZEND_ACC_PRIVATE);
 
     if (option_zval) {
-        zval *r = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("proxy_host", sizeof("proxy_host") - 1, 0));
-        TRACE("proxy_host value=%s", Z_STRVAL_P(r));
-    }
+        zval *proxy_host_zval = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("proxy_host", sizeof("proxy_host") - 1, 0));
 
+        if (proxy_host_zval != NULL) {
+            zval *proxy_password_zval = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("proxy_password", sizeof("proxy_password") - 1, 0));
+            TRACE("option proxy_host=%s  proxy_password=%s", Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval));
+            zval_ptr_dtor(proxy_host_zval);
+
+            zend_update_property_string(ce, this, "proxy_host", sizeof("proxy_host") - 1, Z_STRVAL_P(proxy_host_zval));
+            if (proxy_password_zval != NULL) {
+                zend_update_property_string(ce, this, "proxy_password", sizeof("proxy_password") - 1, Z_STRVAL_P(proxy_password_zval));
+                zval_ptr_dtor(proxy_password_zval);
+            }
+
+        }
+    }
 }
 
 
+PHP_METHOD(WxworkFinanceSdk, getChatData)
+{
+    zend_long seq, limit = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "ll", &seq, &limit) == FAILURE) {
+        return;
+    }
+
+    zval *this = getThis();
+    zend_class_entry *ce = Z_OBJCE_P(this);
+
+    zval *proxy_host_zval = zend_read_property(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
+    zval *proxy_password_zval = zend_read_property(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
+    zval *timeout_zval = zend_read_property(ce, this, "_timeout", sizeof("_timeout") - 1, 0, NULL);
+
+    convert_to_long(timeout_zval);
+
+    Slice_t *chatDatas = NewSlice();
+
+    int ret = GetChatData(sdk, (int)seq, (int)limit, Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), Z_LVAL_P(timeout_zval), chatDatas);
+    if (ret != 0) {
+        zend_throw_exception(wxwork_finance_sdk_exception_ce, "Call WeWorkFinanceSdk_t GetChatData error", ret);
+        return;
+    }
+
+    zend_string *s = zend_string_init(chatDatas->buf, chatDatas->len, 0);
+    RETURN_STR(s);
+
+    zend_string_release(s);
+
+    zval_ptr_dtor(proxy_host_zval);
+    zval_ptr_dtor(proxy_password_zval);
+    zval_ptr_dtor(timeout_zval);
+    FreeSlice(chatDatas);
+}
+
 static const zend_function_entry wxwork_finance_sdk_class_methods[] = {
     PHP_ME(WxworkFinanceSdk, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+    PHP_ME(WxworkFinanceSdk, getChatData, NULL, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -157,14 +212,15 @@ PHP_MINIT_FUNCTION(wxwork_finance_sdk)
 
     zend_declare_property_string(wxwork_finance_sdk_ce, "_corpId", sizeof("_corpId") - 1, "", ZEND_ACC_PRIVATE);
     zend_declare_property_string(wxwork_finance_sdk_ce, "_secret", sizeof("_secret") - 1, "", ZEND_ACC_PRIVATE);
+    // http proxy
     zend_declare_property_string(wxwork_finance_sdk_ce, "_proxy_host", sizeof("_proxy_host") - 1, "", ZEND_ACC_PRIVATE);
     zend_declare_property_string(wxwork_finance_sdk_ce, "_proxy_password", sizeof("_proxy_password") - 1, "", ZEND_ACC_PRIVATE);
-
+    // request timeout
+    zend_declare_property_long(wxwork_finance_sdk_ce, "_timeout", sizeof("_timeout") - 1, 10, ZEND_ACC_PRIVATE);
 
     zend_declare_class_constant_string(wxwork_finance_sdk_ce, "VERSION", sizeof("VERSION") - 1, VERSION);
-  
 
-	 return SUCCESS;
+	return SUCCESS;
 }
 /* }}} */
 
@@ -187,6 +243,9 @@ PHP_RINIT_FUNCTION(wxwork_finance_sdk)
 #if defined(COMPILE_DL_WXWORK_FINANCE_SDK) && defined(ZTS)
 	ZEND_TSRMLS_CACHE_UPDATE();
 #endif
+
+    sdk = NewSdk();
+
 	return SUCCESS;
 }
 /* }}} */
@@ -196,6 +255,8 @@ PHP_RINIT_FUNCTION(wxwork_finance_sdk)
  */
 PHP_RSHUTDOWN_FUNCTION(wxwork_finance_sdk)
 {
+    DestroySdk(sdk);
+    
 	return SUCCESS;
 }
 /* }}} */
