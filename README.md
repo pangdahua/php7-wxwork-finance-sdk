@@ -58,8 +58,7 @@ PHP VERSION >= 7.0
 ```
 
  ## 示例
- 
-    ```php
+ ```php
         $sdk = new WxworkFinanceSdk("wwd08coe7d775abaaa", "zJ6k0naVVQ--gt9PUSSEvs03zW_nlDVmjAkPOTAfrew", [
                    "proxy_host" => "hello", // 代理地址
                    "proxy_password" => "world", // 代理密码
