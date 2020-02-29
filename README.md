@@ -9,16 +9,17 @@
 PHP VERSION >= 7.0
 
 ## 安装步骤及要求
-    ```
-        $INSATLL_PATH_PATH/bin/phpize
+```
+       $INSATLL_PATH_PATH/bin/phpize
         
-        ./configure --with-php-config=$INSTALL_PHP_PATH/php-config --with-wxwork_finance_sdk=$WXWORK_FINANCE_C_SDK_PATH
+       ./configure --with-php-config=$INSTALL_PHP_PATH/php-config --with-wxwork_finance_sdk=$WXWORK_FINANCE_C_SDK_PATH
+       
         make && make install
-    ```
+```
     php.ini 增加 extension=wxwork_finance_sdk.so
     
- ## API
- ```php
+## API
+```php
     WxworkFinanceSdkExcption::__construct();
 ```
 
@@ -74,5 +75,5 @@ PHP VERSION >= 7.0
                 ];
                */
                var_dump($sdk->getMediaData("dddd"));
-    ```
+ ```
     
