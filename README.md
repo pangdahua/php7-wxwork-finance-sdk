@@ -67,13 +67,13 @@ PHP VERSION >= 7.0
                ]);
                
                var_dump(json_decode($sdk->getChatData(0, 100)));
-               /**
+       
                 return [
                     'data' => string // 返回的数据,
                     'nextIndex' => string // 下一个指针,
                     'isFinished' => bool // 是否继续获取 下一条数据标识
                 ];
-               */
+               
                var_dump($sdk->getMediaData("dddd"));
  ```
     
