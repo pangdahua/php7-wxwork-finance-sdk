@@ -12,7 +12,7 @@ PHP VERSION >= 7.0
 ```
        $INSATLL_PATH_PATH/bin/phpize
         
-       ./configure --with-php-config=$INSTALL_PHP_PATH/php-config --with-wxwork_finance_sdk=$WXWORK_FINANCE_C_SDK_PATH
+       ./configure --with-php-config=$INSTALL_PHP_PATH/php-config --with-wxwork-finance-sdk=$WXWORK_FINANCE_C_SDK_PATH
        
         make && make install
 ```

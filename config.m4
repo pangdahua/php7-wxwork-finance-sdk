@@ -7,9 +7,9 @@ dnl without editing.
 
 dnl If your extension references something external, use with:
 
-PHP_ARG_WITH(wxwork_finance_sdk, for wxwork_finance_sdk support,
+PHP_ARG_WITH(wxwork-finance-sdk, for wxwork_finance_sdk support,
 dnl Make sure that the comment is aligned:
-[  --with-wxwork_finance_sdk=DIR           Include wxwork_finance_sdk support])
+[  --with-wxwork-finance-sdk=DIR           Include wxwork_finance_sdk support])
 
 dnl Otherwise use enable:
 
@@ -26,7 +26,7 @@ if test "$PHP_WXWORK_FINANCE_SDK" != "no"; then
   fi
 
   PHP_ADD_INCLUDE($PHP_WXWORK_FINANCE_SDK)
-  PHP_ADD_LIBRARY_WITH_PATH(WeWorkFinanceSdk_C.so, $PHP_WXWORK_FINANCE_SDK, WXWORK_FINANCE_SDK_SHARED_LIBADD)
+  PHP_ADD_LIBRARY_WITH_PATH(WeWorkFinanceSdk_C, $PHP_WXWORK_FINANCE_SDK, WXWORK_FINANCE_SDK_SHARED_LIBADD)
 
   dnl Write more examples of tests here...
 
@@ -88,4 +88,5 @@ if test "$PHP_WXWORK_FINANCE_SDK" != "no"; then
   dnl PHP_SUBST(WXWORK_FINANCE_SDK_SHARED_LIBADD)
 
   PHP_NEW_EXTENSION(wxwork_finance_sdk, wxwork_finance_sdk.c, $ext_shared,, -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1)
+  PHP_SUBST(WXWORK_FINANCE_SDK_SHARED_LIBADD)
 fi
