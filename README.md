@@ -8,6 +8,8 @@
 
 PHP VERSION >= 7.0
 
+openssl扩展
+
 ## 安装步骤及要求
 ```
        $INSATLL_PATH_PATH/bin/phpize
@@ -58,22 +60,11 @@ PHP VERSION >= 7.0
 
 ```
 
+```php
+       string WxworkFinanceSdk::decryptData(string $randomKey, string $encryptStr);
+```
+
  ## 示例
- ```php
-        $sdk = new WxworkFinanceSdk("wwd08coe7d775abaaa", "zJ6k0naVVQ--gt9PUSSEvs03zW_nlDVmjAkPOTAfrew", [
-                   "proxy_host" => "hello", // 代理地址
-                   "proxy_password" => "world", // 代理密码
-                   "timeout" => 100, // 超时时间
-               ]);
-               
-               var_dump(json_decode($sdk->getChatData(0, 100)));
-       
-                return [
-                    'data' => string // 返回的数据,
-                    'nextIndex' => string // 下一个指针,
-                    'isFinished' => bool // 是否继续获取 下一条数据标识
-                ];
-               
-               var_dump($sdk->getMediaData("dddd"));
- ```
+ 
+  wxwork_finance_sdk.php
     
