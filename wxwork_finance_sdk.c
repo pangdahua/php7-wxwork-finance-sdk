@@ -171,7 +171,7 @@ PHP_METHOD(WxworkFinanceSdk, decryptData)
 */
 PHP_METHOD(WxworkFinanceSdk, getMediaData) {
     char *sdk_filedid, *index_buf;
-    int sdk_filedid_len, index_buf_len;
+    size_t sdk_filedid_len, index_buf_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|s", &sdk_filedid, &sdk_filedid_len, &index_buf, &index_buf_len) == FAILURE) {
         zend_error(E_ERROR, "param error");
