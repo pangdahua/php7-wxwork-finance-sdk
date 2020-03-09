@@ -140,6 +140,31 @@ PHP_METHOD(WxworkFinanceSdk, getChatData)
 }
 /* }}} */
 
+/**
+    {{{ proto WxworkFinanceSdk->decryptData(string $encryptRandomKey, string $encryptData)
+*/
+PHP_METHOD(WxworkFinanceSdk, decryptData)
+{
+    zend_string *encrypt_random_key, *encrypt_data;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "SS", &encrypt_random_key, &encrypt_data) == FAILURE) {
+        return;
+    }
+
+    Slice_t *msg = NewSlice();
+
+    int ret = DecryptData(ZSTR_VAL(encrypt_random_key), ZSTR_VAL(encrypt_data), msg);
+    if (ret != 0) {
+        zend_throw_exception(spl_ce_InvalidArgumentException, "DecryptData data error", ret);
+        return;
+    }
+
+    zend_string *return_msg = zend_string_init(GetContentFromSlice(msg), GetSliceLen(msg), 0);
+
+    RETURN_STR(return_msg);
+    FreeSlice(msg);
+    zend_string_release(return_msg);
+}
 
 /**
     {{{ proto WxworkFinanceSdk->getMediaData(string $filedId, string $index='')
@@ -187,6 +212,7 @@ static const zend_function_entry wxwork_finance_sdk_class_methods[] = {
     PHP_ME(WxworkFinanceSdk, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
     PHP_ME(WxworkFinanceSdk, getChatData, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(WxworkFinanceSdk, getMediaData, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(WxworkFinanceSdk, decryptData, NULL, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -299,7 +325,7 @@ PHP_RINIT_FUNCTION(wxwork_finance_sdk)
 
     sdk = NewSdk();
 
-	return SUCCESS;
+    return SUCCESS;
 }
 /* }}} */
 
