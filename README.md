@@ -8,6 +8,8 @@
 
 PHP VERSION >= 7.0
 
+openssl扩展
+
 ## 安装步骤及要求
 ```
        $INSATLL_PATH_PATH/bin/phpize
