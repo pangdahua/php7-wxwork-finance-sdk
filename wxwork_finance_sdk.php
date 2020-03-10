@@ -17,8 +17,7 @@ $chats = json_decode($obj->getChatData(0, 100), true);
 foreach ($chats['chatdata'] as $val) {
     $decryptRandKey = null;
     openssl_private_decrypt(base64_decode($val['encrypt_random_key']), $decryptRandKey, $privateKey, OPENSSL_PKCS1_PADDING);
-    $j = json_decode($obj->decryptData($decryptRandKey, $val['encrypt_chat_msg']));
-    var_dump($j);exit();
+    $obj->downloadMedia($sdkFileId, "/tmp/download");
 }
 
 
