@@ -169,18 +169,12 @@ PHP_METHOD(WxworkFinanceSdk, decryptData)
 /**
     {{{ proto WxworkFinanceSdk->getMediaData(string $filedId, string $index='')
 */
-PHP_METHOD(WxworkFinanceSdk, getMediaData) {
-    char *sdk_filedid, *index_buf;
-    size_t sdk_filedid_len, index_buf_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|s", &sdk_filedid, &sdk_filedid_len, &index_buf, &index_buf_len) == FAILURE) {
-        zend_error(E_ERROR, "param error");
-        return;
-    }
+PHP_METHOD(WxworkFinanceSdk, downloadMedia)
+{
+    zend_string *sdk_filedid, *file_saveto;
 
-    MediaData_t *media_data = NewMediaData();
-    if (NULL == media_data) {
-        zend_error(E_ERROR, "There is not enough  memory!");
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "SS", &sdk_filedid, &file_saveto) == FAILURE) {
         return;
     }
 
@@ -191,28 +185,42 @@ PHP_METHOD(WxworkFinanceSdk, getMediaData) {
     zval *proxy_password_zval = zend_read_property(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
     zval *timeout_zval = zend_read_property(ce, this, "_timeout", sizeof("_timeout") - 1, 0, NULL);
 
-    int ret = GetMediaData(sdk, index_buf, sdk_filedid, Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), media_data);
-
-    if (0 != ret) {
-        zend_throw_exception(wxwork_finance_sdk_exception_ce, "Call WeWorkFinanceSdk_t GetMediaData error", ret);
-        return;
+    FILE *fp = fopen(ZSTR_VAL(file_saveto), "wb");
+    if (NULL == fp) {
+	    zend_throw_exception(wxwork_finance_sdk_exception_ce, "Open", 0);
+	    return;
     }
 
-    array_init(return_value);
-    add_assoc_string(return_value, "data", GetData(media_data));
-    add_assoc_string(return_value, "nextIndex", GetOutIndexBuf(media_data));
-    add_assoc_bool(return_value, "isFinished", IsMediaDataFinish(media_data) == 1 ? 1 : 0);
+    MediaData_t *media_data = NewMediaData();
+    if (NULL == media_data) {
+         zend_error(E_ERROR, "There is not enough  memory!");
+         return;
+    }
 
+    do {
+        int ret = GetMediaData(sdk, GetOutIndexBuf(media_data), ZSTR_VAL(sdk_filedid), Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), media_data);
+
+        if (0 != ret) {
+	    FreeMediaData(media_data);
+            zend_throw_exception(wxwork_finance_sdk_exception_ce, "GetMediaData error", ret);
+            return;
+        }
+        fwrite(GetData(media_data), GetDataLen(media_data), 1, fp);
+    }while(IsMediaDataFinish(media_data) != 1);
+
+    fclose(fp);
     FreeMediaData(media_data);
-}
-/* }}} */
 
+    RETURN_TRUE;
+}
+
+/* }}} */
 
 static const zend_function_entry wxwork_finance_sdk_class_methods[] = {
     PHP_ME(WxworkFinanceSdk, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
     PHP_ME(WxworkFinanceSdk, getChatData, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(WxworkFinanceSdk, getMediaData, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(WxworkFinanceSdk, decryptData, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(WxworkFinanceSdk, downloadMedia, NULL, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -299,8 +307,9 @@ PHP_MINIT_FUNCTION(wxwork_finance_sdk)
 
     zend_declare_class_constant_string(wxwork_finance_sdk_ce, "VERSION", sizeof("VERSION") - 1, VERSION);
 
-	return SUCCESS;
+    return SUCCESS;
 }
+
 /* }}} */
 
 /* {{{ PHP_MSHUTDOWN_FUNCTION
