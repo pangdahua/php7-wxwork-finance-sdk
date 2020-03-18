@@ -1,6 +1,6 @@
 # wxwork_finance_sdk_wrapper
 
-企业微信-获取会话内容PHP扩展
+企业微信-会话内容存档PHP扩展
 
 
 ## 依赖
@@ -46,18 +46,7 @@ openssl扩展
 ``` 
 
 ```php
-   array WxworkFinanceSdk::getMediaData(string $fileId, string $indexBuf = '')
-   * 拉取媒体消息
-    $filedId  从GetChatData返回的聊天消息中，媒体消息包括的sdkfileid
-    $indexBuf 下一次拉取记录
-
-    返回结构:
-    [
-        'data' => '媒体内容',
-        'nextIndex' => '下一次拉取记录',
-        'isFininshed' => bool // true 数据已全部拉取完毕
-    ]
-
+   bool WxworkFinanceSdk::downloadMedia(string $fileId, string $savePath = '')
 ```
 
 ```php
