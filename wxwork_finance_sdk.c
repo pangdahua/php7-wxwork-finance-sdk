@@ -33,7 +33,6 @@ ZEND_DECLARE_MODULE_GLOBALS(wxwork_finance_sdk)
 
 /* True global resources - no need for thread safety here */
 static int le_wxwork_finance_sdk;
-const static char *VERSION = "1.0";
 
 static zend_class_entry *wxwork_finance_sdk_ce;
 static zend_class_entry *wxwork_finance_sdk_exception_ce;
@@ -81,19 +80,15 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
         if (proxy_host_zval != NULL) {
             zval *proxy_password_zval = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("proxy_password", sizeof("proxy_password") - 1, 0));
 
-            zend_update_property_string(ce, this, "proxy_host", sizeof("proxy_host") - 1, Z_STRVAL_P(proxy_host_zval));
+            zend_update_property_string(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, Z_STRVAL_P(proxy_host_zval));
             if (proxy_password_zval != NULL) {
-                zend_update_property_string(ce, this, "proxy_password", sizeof("proxy_password") - 1, Z_STRVAL_P(proxy_password_zval));
-                zval_ptr_dtor(proxy_password_zval);
+                zend_update_property_string(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, Z_STRVAL_P(proxy_password_zval));
             }
-
-            zval_ptr_dtor(proxy_host_zval);
         }
 
         zval *timeout_zval = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("timeout", sizeof("timeout") - 1, 0));
         if (timeout_zval != NULL) {
             zend_update_property_long(ce, this, "_timeout", sizeof("_timeout") - 1, zval_get_long(timeout_zval));
-            zval_ptr_dtor(timeout_zval);
         }
     }
 }
@@ -122,7 +117,6 @@ PHP_METHOD(WxworkFinanceSdk, getChatData)
     zval *proxy_host_zval = zend_read_property(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
     zval *proxy_password_zval = zend_read_property(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
     zval *timeout_zval = zend_read_property(ce, this, "_timeout", sizeof("_timeout") - 1, 0, NULL);
-
     int ret = GetChatData(sdk, (int)seq, (int)limit, Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), chat_data);
     if (0 != ret) {
         zend_throw_exception(wxwork_finance_sdk_exception_ce, "Call WeWorkFinanceSdk_t GetChatData error", ret);
@@ -304,8 +298,6 @@ PHP_MINIT_FUNCTION(wxwork_finance_sdk)
     zend_declare_property_string(wxwork_finance_sdk_ce, "_proxy_password", sizeof("_proxy_password") - 1, "", ZEND_ACC_PRIVATE);
     // request timeout
     zend_declare_property_long(wxwork_finance_sdk_ce, "_timeout", sizeof("_timeout") - 1, 10, ZEND_ACC_PRIVATE);
-
-    zend_declare_class_constant_string(wxwork_finance_sdk_ce, "VERSION", sizeof("VERSION") - 1, VERSION);
 
     return SUCCESS;
 }
