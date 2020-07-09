@@ -196,6 +196,7 @@ PHP_METHOD(WxworkFinanceSdk, downloadMedia)
 
         if (0 != ret) {
 	    FreeMediaData(media_data);
+	    fclose(fp);
             zend_throw_exception(wxwork_finance_sdk_exception_ce, "GetMediaData error", ret);
             return;
         }
