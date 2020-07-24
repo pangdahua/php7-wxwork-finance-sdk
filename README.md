@@ -46,11 +46,17 @@ openssl扩展
 ``` 
 
 ```php
-   bool WxworkFinanceSdk::downloadMedia(string $fileId, string $savePath = '')
+   bool WxworkFinanceSdk::downloadMedia(string $sdkfileid, string $saveTo)
+   * 下载资源
+   $sdkfileid 资源id。来自chat 中的数据sdkfileid
+   $saveTo 本地保存的路径
 ```
 
 ```php
        string WxworkFinanceSdk::decryptData(string $randomKey, string $encryptStr);
+       * 解密数据
+       $randomKey 通过openssl解密后的key
+       $encryptStr chats 的加密数据
 ```
 
  ## 示例
