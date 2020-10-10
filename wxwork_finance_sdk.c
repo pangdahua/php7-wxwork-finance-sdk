@@ -41,7 +41,7 @@ static zend_class_entry *wxwork_finance_sdk_exception_ce;
 */
 static WeWorkFinanceSdk_t* wxwork_finance_internal_get_sdk(zval *wxwork_class_this)
 {
-    zval *wecom_sdk_zval = zend_read_property(Z_OBJCE_P(wxwork_class_this), wxwork_class_this, "_wecomSDK", sizeof("_wecomSDK") - 1, 0, NULL);
+    zval *wecom_sdk_zval = zend_read_property(Z_OBJCE_P(wxwork_class_this), wxwork_class_this, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, 0, NULL);
     WeWorkFinanceSdk_t *wecom_sdk = (WeWorkFinanceSdk_t *)Z_PTR_P(wecom_sdk_zval);
 
     return wecom_sdk;
