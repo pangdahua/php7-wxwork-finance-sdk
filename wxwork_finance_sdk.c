@@ -58,6 +58,8 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
     char *corp_id, *secret;
     size_t corp_id_len, secret_len;
     zval *option_zval = NULL;
+    zval wecom_sdk_zval;
+    WeWorkFinanceSdk_t *wecom_sdk;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "ss|a", &corp_id, &corp_id_len,  &secret, &secret_len, &option_zval) == FAILURE) {
         zend_error(E_ERROR, "param error");
@@ -72,14 +74,16 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
     zval *this = getThis();
     zend_class_entry *ce = Z_OBJCE_P(this);
     // init wecom finance sdk
-    WeWorkFinanceSdk_t *wecom_sdk = wxwork_finance_internal_get_sdk(this);
-
+    wecom_sdk = NewSdk();
     int ret = Init(wecom_sdk, corp_id, secret);
 
     if (ret != 0) {
         zend_throw_exception(wxwork_finance_sdk_exception_ce, "Call WeWorkFinanceSdk_t Init error", ret);
         return;
     }
+
+    ZVAL_PTR(&wecom_sdk_zval, wecom_sdk);
+    zend_update_property(ce, this, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, &wecom_sdk_zval);
 
     zend_update_property_string(ce, this, "_corpId", sizeof("_corpId") - 1, corp_id);
     zend_update_property_string(ce, this, "_secret", sizeof("_secret") - 1, secret);
@@ -219,10 +223,10 @@ PHP_METHOD(WxworkFinanceSdk, downloadMedia)
         int ret = GetMediaData(wecom_sdk, GetOutIndexBuf(media_data), ZSTR_VAL(sdk_filedid), Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), media_data);
 
         if (0 != ret) {
-	    FreeMediaData(media_data);
-	    fclose(fp);
-            zend_throw_exception(wxwork_finance_sdk_exception_ce, "GetMediaData error", ret);
-            return;
+	       FreeMediaData(media_data);
+	       fclose(fp);
+           zend_throw_exception(wxwork_finance_sdk_exception_ce, "GetMediaData error", ret);
+           return;
         }
         fwrite(GetData(media_data), GetDataLen(media_data), 1, fp);
     }while(IsMediaDataFinish(media_data) != 1);
@@ -307,9 +311,6 @@ PHP_MINIT_FUNCTION(wxwork_finance_sdk)
 	 REGISTER_INI_ENTRIES();
 	 */
 
-    zval wecom_sdk_zval;
-    WeWorkFinanceSdk_t* wecom_sdk = NewSdk();
-    ZVAL_PTR(&wecom_sdk_zval, wecom_sdk);
     // define WxworkFinanceSdkException
     zend_class_entry wxwork_finance_sdk_exception_def;
     INIT_CLASS_ENTRY(wxwork_finance_sdk_exception_def, "WxworkFinanceSdkException", wxwork_finance_sdk_exception_methods);
@@ -327,7 +328,7 @@ PHP_MINIT_FUNCTION(wxwork_finance_sdk)
     // request timeout
     zend_declare_property_long(wxwork_finance_sdk_ce, "_timeout", sizeof("_timeout") - 1, 10, ZEND_ACC_PRIVATE);
     // declare wecom finance sdk
-    zend_declare_property(wxwork_finance_sdk_ce, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, &wecom_sdk_zval, ZEND_ACC_PRIVATE);
+    zend_declare_property_null(wxwork_finance_sdk_ce, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, ZEND_ACC_PRIVATE);
 
     return SUCCESS;
 }
