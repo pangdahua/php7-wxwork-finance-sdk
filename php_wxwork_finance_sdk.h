@@ -73,6 +73,9 @@ static inline void trace(const char *file, int line, const char* function, const
     va_end(args);
 }
 
+#define WXWORK_SDK_G_NAME "_wecomSDK"
+#define WXWORK_SDK_G_NAME_SIZE sizeof(WXWORK_SDK_G_NAME) - 1
+
 #endif	/* PHP_WXWORK_FINANCE_SDK_H */
 
 /*
