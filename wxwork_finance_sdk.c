@@ -213,8 +213,7 @@ PHP_METHOD(WxworkFinanceSdk, downloadMedia)
          return;
     }
 
-    zval *wecom_sdk_zval = zend_read_property(ce, this, "_wecomSdk", sizeof("_wecomSdk") - 1, 0, NULL);
-    WeWorkFinanceSdk_t *wecom_sdk = (WeWorkFinanceSdk_t *)Z_PTR_P(wecom_sdk_zval);
+    WeWorkFinanceSdk_t *wecom_sdk = wxwork_finance_internal_get_sdk(this);
 
     do {
         int ret = GetMediaData(wecom_sdk, GetOutIndexBuf(media_data), ZSTR_VAL(sdk_filedid), Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), media_data);
