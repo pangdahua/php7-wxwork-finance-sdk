@@ -26,8 +26,6 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_wxwork_finance_sdk.h"
-#define WXWORK_SDK_G_NAME "_wecomSDK"
-#define WXWORK_SDK_G_NAME_SIZE sizeof(WXWORK_SDK_G_NAME) - 1
 /* If you declare any globals in php_wxwork_finance_sdk.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(wxwork_finance_sdk)
 */
