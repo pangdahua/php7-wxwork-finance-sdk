@@ -326,7 +326,7 @@ PHP_MINIT_FUNCTION(wxwork_finance_sdk)
     zend_declare_property_string(wxwork_finance_sdk_ce, "_proxy_host", sizeof("_proxy_host") - 1, "", ZEND_ACC_PRIVATE);
     zend_declare_property_string(wxwork_finance_sdk_ce, "_proxy_password", sizeof("_proxy_password") - 1, "", ZEND_ACC_PRIVATE);
     // request timeout
-    zend_declare_property_long(wxwork_finance_sdk_ce, "_timeout", sizeof("_timeout") - 1, 10, ZEND_ACC_PRIVATE);
+    zend_declare_property_long(wxwork_finance_sdk_ce, "_timeout", sizeof("_timeout") - 1, WXWORK_SDK_DEFAULT_TIMEOUT, ZEND_ACC_PRIVATE);
     // declare wecom finance sdk
     zend_declare_property_null(wxwork_finance_sdk_ce, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, ZEND_ACC_PRIVATE);
 

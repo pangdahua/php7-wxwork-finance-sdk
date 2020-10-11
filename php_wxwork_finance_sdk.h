@@ -75,6 +75,8 @@ static inline void trace(const char *file, int line, const char* function, const
 
 #define WXWORK_SDK_G_NAME "_wecomSDK"
 #define WXWORK_SDK_G_NAME_SIZE sizeof(WXWORK_SDK_G_NAME) - 1
+// 默认超时时间
+#define WXWORK_SDK_DEFAULT_TIMEOUT 30
 
 #endif	/* PHP_WXWORK_FINANCE_SDK_H */
 
