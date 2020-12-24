@@ -235,11 +235,12 @@ PHP_METHOD(WxworkFinanceSdk, getMediaData)
         return;
     }
 
-    array_init(return_value);
+    /*array_init(return_value);
     add_assoc_string(return_value, "data", GetData(media_data));
     add_assoc_string(return_value, "nextIndex", GetOutIndexBuf(media_data));
     add_assoc_bool(return_value, "isFinished", IsMediaDataFinish(media_data) == 1 ? 1 : 0);
-
+    */
+    RETURN_STRINGL(GetData(media_data), GetDataLen(media_data));
     FreeMediaData(media_data);
 }
 
