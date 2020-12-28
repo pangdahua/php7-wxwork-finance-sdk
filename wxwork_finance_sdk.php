@@ -14,7 +14,7 @@ var_dump($chats);
 foreach ($chats['chatdata'] as $val) {
     $decryptRandKey = null;
     openssl_private_decrypt(base64_decode($val['encrypt_random_key']), $decryptRandKey, $privateKey, OPENSSL_PKCS1_PADDING);
-    $obj->downloadMedia($sdkFileId, "/tmp/download");
+    $obj->downloadMedia($sdkFileId, "/tmp/download/文件新名称.后缀");
 }
 
 

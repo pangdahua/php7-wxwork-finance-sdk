@@ -46,14 +46,28 @@ openssl扩展
 ``` 
 
 ```php
-   bool WxworkFinanceSdk::downloadMedia(string $fileId, string $savePath = '')
+   bool WxworkFinanceSdk::downloadMedia(string $sdkfileid, string $saveTo)
+   * 下载资源
+   $sdkfileid 资源id。来自chat 中的数据sdkfileid
+   $saveTo 本地保存的路径
 ```
 
 ```php
        string WxworkFinanceSdk::decryptData(string $randomKey, string $encryptStr);
+       * 解密数据
+       $randomKey 通过openssl解密后的key
+       $encryptStr chats 的加密数据
 ```
+
+## 问题
+      1. free(): invalid pointer
+       * 暂时定位intl扩展的冲突问题. php -m |grep intl 建议重新编译php 取消intl扩展
 
  ## 示例
  
   wxwork_finance_sdk.php
     
+打赏一下的话就更好了~
+ Alipay
+ 
+ <img src="https://github.com/pangdahua/php7-wxwork-finance-sdk/blob/sponsor/imgs/Alipay.png" width="230" height="230" />
