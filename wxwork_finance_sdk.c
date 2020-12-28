@@ -258,6 +258,7 @@ PHP_METHOD(WxworkFinanceSdk, getMediaData)
         return;
     }
 
+    WeWorkFinanceSdk_t *wecom_sdk = wxwork_finance_internal_get_sdk(this);
     int ret = GetMediaData(wecom_sdk, ZSTR_VAL(index_buf), ZSTR_VAL(sdk_filedid), Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), media_data);
     if (0 != ret) {
         zend_throw_exception(wxwork_finance_sdk_exception_ce, "GetMediaData error", ret);
