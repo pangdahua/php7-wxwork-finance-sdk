@@ -373,7 +373,6 @@ PHP_RINIT_FUNCTION(wxwork_finance_sdk)
 PHP_RSHUTDOWN_FUNCTION(wxwork_finance_sdk)
 {
     DestroySdk(sdk);
-
 	return SUCCESS;
 }
 /* }}} */
