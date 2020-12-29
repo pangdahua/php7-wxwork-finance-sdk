@@ -59,11 +59,12 @@ openssl扩展
    $ret = [
        'data' => '' // string 返回的数据
        'nextIndex' => 'ddd' // string 获取下一段数据的句柄
-       'isFinished' => int // 1 表示结束 
+       'isFinished' => int // 1 数据已拉取完毕 
    ];
    
-   * 感谢 @zhanzhaopeng1 PR
+   
 ```
+* 感谢 @zhanzhaopeng1 PR
 
 
 ```php
