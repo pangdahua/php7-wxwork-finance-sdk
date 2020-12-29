@@ -53,11 +53,27 @@ openssl扩展
 ```
 
 ```php
+   array WxworkFinanceSdk::getMediaData(string $sdkfileid, string $indexBuf='');
+   * 拉取静态资源数据，用于可以支持追加模式的三方存储平台
+   返回的数据结构体
+   $ret = [
+       'data' => '' // string 返回的数据
+       'nextIndex' => 'ddd' // string 获取下一段数据的句柄
+       'isFinished' => int // 1 表示结束 
+   ];
+   
+   * 感谢 @zhanzhaopeng1 PR
+```
+
+
+```php
        string WxworkFinanceSdk::decryptData(string $randomKey, string $encryptStr);
        * 解密数据
        $randomKey 通过openssl解密后的key
        $encryptStr chats 的加密数据
 ```
+
+
 
 ## 问题
       1. free(): invalid pointer
