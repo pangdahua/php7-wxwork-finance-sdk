@@ -237,6 +237,43 @@ PHP_METHOD(WxworkFinanceSdk, downloadMedia)
     RETURN_TRUE;
 }
 
+PHP_METHOD(WxworkFinanceSdk, getMediaData)
+{
+    zend_string *sdk_filedid, *index_buf;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "SS", &sdk_filedid, &index_buf) == FAILURE) {
+        return;
+    }
+
+    zval *this = getThis();
+    zend_class_entry *ce = Z_OBJCE_P(this);
+
+    zval *proxy_host_zval = zend_read_property(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
+    zval *proxy_password_zval = zend_read_property(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
+    zval *timeout_zval = zend_read_property(ce, this, "_timeout", sizeof("_timeout") - 1, 0, NULL);
+
+    MediaData_t *media_data = NewMediaData();
+    if (NULL == media_data) {
+        zend_error(E_ERROR, "There is not enough  memory!");
+        return;
+    }
+
+    WeWorkFinanceSdk_t *wecom_sdk = wxwork_finance_internal_get_sdk(this);
+    int ret = GetMediaData(wecom_sdk, ZSTR_VAL(index_buf), ZSTR_VAL(sdk_filedid), Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), media_data);
+    if (0 != ret) {
+        zend_throw_exception(wxwork_finance_sdk_exception_ce, "GetMediaData error", ret);
+        return;
+    }
+
+    array_init(return_value);
+    add_assoc_stringl(return_value, "data", GetData(media_data), GetDataLen(media_data));
+    add_assoc_string(return_value, "nextIndex", GetOutIndexBuf(media_data));
+    add_assoc_bool(return_value, "isFinished", IsMediaDataFinish(media_data) == 1 ? 1 : 0);
+
+    //RETURN_STRINGL(GetData(media_data), GetDataLen(media_data));
+    FreeMediaData(media_data);
+}
+
 /* }}} */
 
 static const zend_function_entry wxwork_finance_sdk_class_methods[] = {
@@ -244,6 +281,7 @@ static const zend_function_entry wxwork_finance_sdk_class_methods[] = {
     PHP_ME(WxworkFinanceSdk, getChatData, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(WxworkFinanceSdk, decryptData, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(WxworkFinanceSdk, downloadMedia, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(WxworkFinanceSdk, getMediaData, NULL, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
