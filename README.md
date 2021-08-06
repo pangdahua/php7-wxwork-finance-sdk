@@ -79,7 +79,6 @@ openssl扩展
 ## 问题
       1. free(): invalid pointer
        * 定位intl扩展的冲突问题. php -m |grep intl 建议重新编译php 取消intl扩展
-       github.com/pangdahua/php7-wxwork-finance-sdk/#28
 
  ## 示例
  
