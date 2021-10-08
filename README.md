@@ -83,7 +83,9 @@ openssl扩展
  ## 示例
  
   wxwork_finance_sdk.php
-    
+
+* 遇到问题可以加我的麻花藤号 5687046 
+
 打赏一下的话就更好了~
  Alipay
  
