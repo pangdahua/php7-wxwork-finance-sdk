@@ -76,10 +76,13 @@ openssl扩展
 
 
 
-## 问题
+## 已知问题
       1. free(): invalid pointer
        * 定位intl扩展的冲突问题. php -m |grep intl 建议重新编译php 取消intl扩展
-
+       
+      2. 与swoole的扩展冲突
+       * 优先加载wxwork_finance_sdk.so 后加载swoole 【@tisswb】
+       
  ## 示例
  
   wxwork_finance_sdk.php
