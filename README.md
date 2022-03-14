@@ -12,7 +12,7 @@ openssl扩展
 
 ## 安装步骤及要求
 ```
-       $INSATLL_PATH_PATH/bin/phpize
+       $INSATLL_PHP_PATH/bin/phpize
         
        ./configure --with-php-config=$INSTALL_PHP_PATH/php-config --with-wxwork-finance-sdk=$WXWORK_FINANCE_C_SDK_PATH
        
