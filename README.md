@@ -87,8 +87,6 @@ openssl扩展
  
   wxwork_finance_sdk.php
 
-
-打赏一下的话就更好了~
  Alipay
  
  <img src="https://github.com/pangdahua/php7-wxwork-finance-sdk/blob/sponsor/imgs/Alipay.png" width="230" height="230" />
