@@ -112,7 +112,7 @@ PHP_METHOD(WxworkFinanceSdk, __destruct)
     zval *this = getThis();
     WeWorkFinanceSdk_t *wecom_sdk = wxwork_finance_internal_get_sdk(this);
     DestroySdk(wecom_sdk);
-    TRACE("release wecom_sdk");
+    //TRACE("release wecom_sdk");
 }
 
 /**
@@ -145,6 +145,7 @@ PHP_METHOD(WxworkFinanceSdk, getChatData)
 
     int ret = GetChatData(wecom_sdk, (int)seq, (int)limit, Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), chat_data);
     if (0 != ret) {
+        FreeSlice(chat_data);
         zend_throw_exception(wxwork_finance_sdk_exception_ce, "Call WeWorkFinanceSdk_t GetChatData error", ret);
         return;
     }
