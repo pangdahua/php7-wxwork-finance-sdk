@@ -130,6 +130,7 @@ PHP_METHOD(WxworkFinanceSdk, getChatData)
     Slice_t *chat_data = NewSlice();
 
     if (NULL == chat_data) {
+        FreeSlice(chat_data);
         zend_error(E_ERROR, "There is not enough  memory!");
         return;
     }
@@ -153,7 +154,6 @@ PHP_METHOD(WxworkFinanceSdk, getChatData)
     zend_string *s = zend_string_init(GetContentFromSlice(chat_data), GetSliceLen(chat_data), 0);
     RETURN_STR(s);
 
-    zend_string_release(s);
     zval_ptr_dtor(proxy_host_zval);
     zval_ptr_dtor(proxy_password_zval);
     zval_ptr_dtor(timeout_zval);
@@ -184,7 +184,6 @@ PHP_METHOD(WxworkFinanceSdk, decryptData)
 
     RETURN_STR(return_msg);
     FreeSlice(msg);
-    zend_string_release(return_msg);
 }
 
 /**
