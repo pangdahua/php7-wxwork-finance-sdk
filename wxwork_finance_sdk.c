@@ -26,6 +26,7 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_wxwork_finance_sdk.h"
+#include <errno.h>
 /* If you declare any globals in php_wxwork_finance_sdk.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(wxwork_finance_sdk)
 */
@@ -207,7 +208,7 @@ PHP_METHOD(WxworkFinanceSdk, downloadMedia)
 
     FILE *fp = fopen(ZSTR_VAL(file_saveto), "wb");
     if (NULL == fp) {
-	    zend_throw_exception(wxwork_finance_sdk_exception_ce, "Open", 0);
+        zend_throw_exception_ex(wxwork_finance_sdk_exception_ce, errno, "cannot write file: %s error %s", ZSTR_VAL(file_saveto), strerror(errno));
 	    return;
     }
 
