@@ -31,6 +31,12 @@
 ZEND_DECLARE_MODULE_GLOBALS(wxwork_finance_sdk)
 */
 
+/** {{{ ARG_INFO
+ */
+ZEND_BEGIN_ARG_INFO_EX(wxwork_void_arginfo, 0, 0, 0)
+ZEND_END_ARG_INFO()
+/* }}} */
+
 /* True global resources - no need for thread safety here */
 static int le_wxwork_finance_sdk;
 
@@ -42,7 +48,8 @@ static zend_class_entry *wxwork_finance_sdk_exception_ce;
 */
 static WeWorkFinanceSdk_t* wxwork_finance_internal_get_sdk(zval *wxwork_class_this)
 {
-    zval *wecom_sdk_zval = zend_read_property(Z_OBJCE_P(wxwork_class_this), wxwork_class_this, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, 0, NULL);
+    zend_object *object = Z_OBJ_P(wxwork_class_this);
+    zval *wecom_sdk_zval = zend_read_property(object->ce, object, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, 0, NULL);
     WeWorkFinanceSdk_t *wecom_sdk = (WeWorkFinanceSdk_t *)Z_PTR_P(wecom_sdk_zval);
 
     return wecom_sdk;
@@ -73,7 +80,8 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
     }
 
     zval *this = getThis();
-    zend_class_entry *ce = Z_OBJCE_P(this);
+    zend_object *object = Z_OBJ_P(this);
+
     // init wecom finance sdk
     wecom_sdk = NewSdk();
     int ret = Init(wecom_sdk, corp_id, secret);
@@ -84,10 +92,10 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
     }
 
     ZVAL_PTR(&wecom_sdk_zval, wecom_sdk);
-    zend_update_property(ce, this, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, &wecom_sdk_zval);
+    zend_update_property(object->ce, object, WXWORK_SDK_G_NAME, WXWORK_SDK_G_NAME_SIZE, &wecom_sdk_zval);
 
-    zend_update_property_string(ce, this, "_corpId", sizeof("_corpId") - 1, corp_id);
-    zend_update_property_string(ce, this, "_secret", sizeof("_secret") - 1, secret);
+    zend_update_property_string(object->ce, object, "_corpId", sizeof("_corpId") - 1, corp_id);
+    zend_update_property_string(object->ce, object, "_secret", sizeof("_secret") - 1, secret);
 
     if (option_zval) {
         zval *proxy_host_zval = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("proxy_host", sizeof("proxy_host") - 1, 0));
@@ -95,15 +103,15 @@ PHP_METHOD(WxworkFinanceSdk, __construct)
         if (proxy_host_zval != NULL) {
             zval *proxy_password_zval = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("proxy_password", sizeof("proxy_password") - 1, 0));
 
-            zend_update_property_string(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, Z_STRVAL_P(proxy_host_zval));
+            zend_update_property_string(object->ce, object, "_proxy_host", sizeof("_proxy_host") - 1, Z_STRVAL_P(proxy_host_zval));
             if (proxy_password_zval != NULL) {
-                zend_update_property_string(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, Z_STRVAL_P(proxy_password_zval));
+                zend_update_property_string(object->ce, object, "_proxy_password", sizeof("_proxy_password") - 1, Z_STRVAL_P(proxy_password_zval));
             }
         }
 
         zval *timeout_zval = zend_hash_find(Z_ARR_P(option_zval), zend_string_init("timeout", sizeof("timeout") - 1, 0));
         if (timeout_zval != NULL) {
-            zend_update_property_long(ce, this, "_timeout", sizeof("_timeout") - 1, zval_get_long(timeout_zval));
+            zend_update_property_long(object->ce, object, "_timeout", sizeof("_timeout") - 1, zval_get_long(timeout_zval));
         }
     }
 }
@@ -137,13 +145,13 @@ PHP_METHOD(WxworkFinanceSdk, getChatData)
     }
 
     zval *this = getThis();
-    zend_class_entry *ce = Z_OBJCE_P(this);
+    zend_object *object = Z_OBJ_P(this);
 
     WeWorkFinanceSdk_t *wecom_sdk = wxwork_finance_internal_get_sdk(this);
 
-    zval *proxy_host_zval = zend_read_property(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
-    zval *proxy_password_zval = zend_read_property(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
-    zval *timeout_zval = zend_read_property(ce, this, "_timeout", sizeof("_timeout") - 1, 0, NULL);
+    zval *proxy_host_zval = zend_read_property(object->ce, object, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
+    zval *proxy_password_zval = zend_read_property(object->ce, object, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
+    zval *timeout_zval = zend_read_property(object->ce, object, "_timeout", sizeof("_timeout") - 1, 0, NULL);
 
     int ret = GetChatData(wecom_sdk, (int)seq, (int)limit, Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), chat_data);
     if (0 != ret) {
@@ -200,11 +208,11 @@ PHP_METHOD(WxworkFinanceSdk, downloadMedia)
     }
 
     zval *this = getThis();
-    zend_class_entry *ce = Z_OBJCE_P(this);
+    zend_object *object = Z_OBJ_P(this);
 
-    zval *proxy_host_zval = zend_read_property(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
-    zval *proxy_password_zval = zend_read_property(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
-    zval *timeout_zval = zend_read_property(ce, this, "_timeout", sizeof("_timeout") - 1, 0, NULL);
+    zval *proxy_host_zval = zend_read_property(object->ce, object, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
+    zval *proxy_password_zval = zend_read_property(object->ce, object, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
+    zval *timeout_zval = zend_read_property(object->ce, object, "_timeout", sizeof("_timeout") - 1, 0, NULL);
 
     FILE *fp = fopen(ZSTR_VAL(file_saveto), "wb");
     if (NULL == fp) {
@@ -247,11 +255,11 @@ PHP_METHOD(WxworkFinanceSdk, getMediaData)
     }
 
     zval *this = getThis();
-    zend_class_entry *ce = Z_OBJCE_P(this);
+    zend_object *object = Z_OBJ_P(this);
 
-    zval *proxy_host_zval = zend_read_property(ce, this, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
-    zval *proxy_password_zval = zend_read_property(ce, this, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
-    zval *timeout_zval = zend_read_property(ce, this, "_timeout", sizeof("_timeout") - 1, 0, NULL);
+    zval *proxy_host_zval = zend_read_property(object->ce, object, "_proxy_host", sizeof("_proxy_host") - 1, 0, NULL);
+    zval *proxy_password_zval = zend_read_property(object->ce, object, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
+    zval *timeout_zval = zend_read_property(object->ce, object, "_timeout", sizeof("_timeout") - 1, 0, NULL);
 
     MediaData_t *media_data = NewMediaData();
     if (NULL == media_data) {
@@ -278,11 +286,11 @@ PHP_METHOD(WxworkFinanceSdk, getMediaData)
 /* }}} */
 
 static const zend_function_entry wxwork_finance_sdk_class_methods[] = {
-    PHP_ME(WxworkFinanceSdk, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
-    PHP_ME(WxworkFinanceSdk, getChatData, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(WxworkFinanceSdk, decryptData, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(WxworkFinanceSdk, downloadMedia, NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(WxworkFinanceSdk, getMediaData, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(WxworkFinanceSdk, __construct, wxwork_void_arginfo, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+    PHP_ME(WxworkFinanceSdk, getChatData, wxwork_void_arginfo, ZEND_ACC_PUBLIC)
+    PHP_ME(WxworkFinanceSdk, decryptData, wxwork_void_arginfo, ZEND_ACC_PUBLIC)
+    PHP_ME(WxworkFinanceSdk, downloadMedia, wxwork_void_arginfo, ZEND_ACC_PUBLIC)
+    PHP_ME(WxworkFinanceSdk, getMediaData, wxwork_void_arginfo, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -428,7 +436,7 @@ PHP_MINFO_FUNCTION(wxwork_finance_sdk)
  * Every user visible function must have an entry in wxwork_finance_sdk_functions[].
  */
 const zend_function_entry wxwork_finance_sdk_functions[] = {
-	PHP_FE(confirm_wxwork_finance_sdk_compiled,	NULL)		/* For testing, remove later. */
+	PHP_FE(confirm_wxwork_finance_sdk_compiled,	wxwork_void_arginfo)		/* For testing, remove later. */
 	PHP_FE_END	/* Must be the last line in wxwork_finance_sdk_functions[] */
 };
 /* }}} */
