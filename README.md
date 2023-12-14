@@ -6,8 +6,8 @@
 ## 依赖
 企业微信提供的sdk;
 
-PHP VERSION >= 7.0
-
+PHP VERSION >= 7.0 
+* 已支持 php8 感谢 @singee77 pr
 openssl扩展
 
 ## 安装步骤及要求
