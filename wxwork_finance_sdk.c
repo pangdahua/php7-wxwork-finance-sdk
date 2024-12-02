@@ -153,7 +153,7 @@ PHP_METHOD(WxworkFinanceSdk, getChatData)
     zval *proxy_password_zval = zend_read_property(object->ce, object, "_proxy_password", sizeof("_proxy_password") - 1, 0, NULL);
     zval *timeout_zval = zend_read_property(object->ce, object, "_timeout", sizeof("_timeout") - 1, 0, NULL);
 
-    int ret = GetChatData(wecom_sdk, (int)seq, (int)limit, Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), chat_data);
+    int ret = GetChatData(wecom_sdk, seq, (int)limit, Z_STRVAL_P(proxy_host_zval), Z_STRVAL_P(proxy_password_zval), zval_get_long(timeout_zval), chat_data);
     if (0 != ret) {
         FreeSlice(chat_data);
         zend_throw_exception(wxwork_finance_sdk_exception_ce, "Call WeWorkFinanceSdk_t GetChatData error", ret);
