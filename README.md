@@ -7,7 +7,8 @@
 企业微信提供的sdk;
 
 PHP VERSION >= 7.0 
-* 已支持 php8 感谢 @singee77 pr
+* 已支持 php8 感谢 @singee77 pr （master 分支）
+* PHP7 使用 tag v1.2.0
   
 openssl扩展
 
